@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     // Load background template
     const template = await loadImage("https://i.ibb.co/TM52kYGr/image.jpg");
 
-    // Load avatar image from URL
+    // Load avatar from URL
     const avatarResp = await axios.get(avatar, { responseType: "arraybuffer" });
     const avatarImg = await loadImage(Buffer.from(avatarResp.data));
 
@@ -20,18 +20,18 @@ export default async function handler(req, res) {
     const canvas = createCanvas(template.width, template.height);
     const ctx = canvas.getContext("2d");
 
-    // Draw background
+    // Draw background template
     ctx.drawImage(template, 0, 0);
 
-    // Draw avatar in the center
-    const avatarSize = 250;
+    // Smaller avatar and slightly lower
+    const avatarSize = 180; // smaller size
     const x = (canvas.width - avatarSize) / 2;
-    const y = canvas.height - avatarSize - 30;
+    const y = canvas.height - avatarSize - 10; // slightly down from bottom
     ctx.drawImage(avatarImg, x, y, avatarSize, avatarSize);
 
-    // Output PNG
+    // Output image
     res.setHeader("Content-Type", "image/png");
-    const buffer = await canvas.encode("png"); // @napi-rs/canvas uses encode()
+    const buffer = await canvas.encode("png");
     return res.send(buffer);
   } catch (err) {
     console.error("Canvas error:", err);
